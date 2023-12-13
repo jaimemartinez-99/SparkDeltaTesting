@@ -18,12 +18,6 @@ object KafkaSparkDelta {
         "org.apache.spark.sql.delta.catalog.DeltaCatalog")
       .getOrCreate()
 
-    /*
-    //val csvPath= "D:/BECA/SparkTest/SparkTest/src/main/scala/org/example/data/csv/data1.csv"
-    // data = spark.range(0, 5)
-    data.write.format("delta").save("D:/BECA/SparkTest/SparkTest/src/main/scala/org/example/data/csv/results/delta-table")
-    */
-
     // Se crea el DataFrame a partir del topic de kafka al que se envían los datos
 /*
     val df = spark.readStream
@@ -41,9 +35,14 @@ object KafkaSparkDelta {
       .selectExpr("from_json(value, 'student_name string, graduation_year string, major string') as data")
       .select("data.*")
 
+    val cleanDF = transformedDF
+      .withColumn("student_first_name", split(col("student_name"), "XX").getItem(0))
+      .withColumn("student_last_name", split(col("student_name"), "XX").getItem(1))
+      .drop("student_name")
+
 
     // Se guarda la información recibida en una tabla delta
-    val deltaQuery = transformedDF
+    cleanDF
       .writeStream
       .outputMode("append")
       .format("delta")
@@ -53,7 +52,7 @@ object KafkaSparkDelta {
     // Se muestra por consola la información
 
 
-    val query = transformedDF
+    val query = cleanDF
       .writeStream
       .format("console") // Use "console" format to display in the console
       .outputMode("append")
@@ -61,13 +60,15 @@ object KafkaSparkDelta {
       .start()
 
 
-  */
-    //query.awaitTermination()
+
+    query.awaitTermination()
 
 
-    //query.awaitTermination()
 
 
+
+
+ */
     // Se lee el archivo delta guardado
     val dfTable = spark.read.format("delta").load("D:/BECA/SparkTest/SparkTest/src/main/scala/org/example/data/csv/results/delta-table-stream")
     dfTable.show()
