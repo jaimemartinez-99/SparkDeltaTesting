@@ -19,7 +19,7 @@ object KafkaSparkDelta {
       .getOrCreate()
 
     // Se crea el DataFrame a partir del topic de kafka al que se envían los datos
-/*
+
     val df = spark.readStream
       .format("kafka")
       .option("kafka.bootstrap.servers", "localhost:9092")
@@ -34,7 +34,7 @@ object KafkaSparkDelta {
       .selectExpr("CAST(value AS STRING) as value")
       .selectExpr("from_json(value, 'student_name string, graduation_year string, major string') as data")
       .select("data.*")
-
+  /*
     val cleanDF = transformedDF
       .withColumn("student_first_name", split(col("student_name"), "XX").getItem(0))
       .withColumn("student_last_name", split(col("student_name"), "XX").getItem(1))
@@ -46,9 +46,9 @@ object KafkaSparkDelta {
       .writeStream
       .outputMode("append")
       .format("delta")
-      .option("checkpointLocation", "D:/BECA/SparkTest/SparkTest/src/main/scala/org/example/data/csv/results/delta-table-stream-checkpoint")
+      .option("checkpointLocation", "D:/BECA/SparkTest/SparkTest/src/main/scala/org/example/data/csv/results/delta-table-stream-iot-checkpoint")
       .trigger(Trigger.ProcessingTime("10 seconds"))
-      .start("D:/BECA/SparkTest/SparkTest/src/main/scala/org/example/data/csv/results/delta-table-stream")
+      .start("D:/BECA/SparkTest/SparkTest/src/main/scala/org/example/data/csv/results/delta-table-stream-iot")
     // Se muestra por consola la información
 
 
@@ -63,14 +63,9 @@ object KafkaSparkDelta {
 
     query.awaitTermination()
 
-
-
-
-
-
- */
+*/
     // Se lee el archivo delta guardado
-    val dfTable = spark.read.format("delta").load("D:/BECA/SparkTest/SparkTest/src/main/scala/org/example/data/csv/results/delta-table-stream")
+    val dfTable = spark.read.format("delta").load("D:/BECA/SparkTest/SparkTest/src/main/scala/org/example/data/csv/results/delta-table-stream-iot")
     dfTable.show()
     spark.stop()
 
